@@ -1,22 +1,22 @@
 const User = require("../models/user.model");
 
-exports.getAllUsers = () => {
-  return User.find().populate("role"); // pastikan di model: `ref: "Role"`
+const UserService = {
+  getAllUsers: async () => {
+    return await User.find().populate("role");
+  },
+
+  createUser: async (data) => {
+    const newUser = new User(data);
+    return await newUser.save();
+  },
+
+  updateUser: async (id, data) => {
+    return await User.findByIdAndUpdate(id, data, { new: true });
+  },
+
+  deleteUser: async (id) => {
+    return await User.findByIdAndDelete(id);
+  },
 };
 
-exports.createUser = async (data) => {
-  const existing = await User.findOne({ _id: data._id });
-  if (existing) {
-    throw new Error("User with this _id already exists");
-  }
-  const newUser = new User(data);
-  return newUser.save();
-};
-
-exports.updateUser = (id, data) => {
-  return User.findOneAndUpdate({ _id: id }, data, { new: true });
-};
-
-exports.deleteUser = (id) => {
-  return User.findByIdAndDelete(id);
-};
+module.exports = UserService;
